@@ -10,18 +10,12 @@ import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.IOUtils;
 
 public class FileCms extends File {
-
-    private static final String[] VIDEO_EXTENSIONS = {"mp4", "avi"};
-    private static final String[] AUDIO_EXTENSIONS = {"mp3", "aac", "ac3", "ogg"};
-    private static final String[] IMAGE_EXTENSIONS = {"jpeg", "jpg", "png", "avif"};
-    private static final String[] TXT_EXTENSIONS = {"txt", "xml"};
-
-    private FileType type;
 
     public static List<FileCms> convert(List<File> files) {
         List<FileCms> filesTlx = new ArrayList<>();
@@ -33,18 +27,12 @@ public class FileCms extends File {
 
     public FileCms(String path) {
         super(path);
-//        defineType();
         valid(this);
     }
 
     public FileCms(File file) {
         super(file.getAbsolutePath());
-//        defineType();
         valid(this);
-    }
-
-    public FileType getType() {
-        return type;
     }
 
     public String getExtension() {
@@ -53,6 +41,16 @@ public class FileCms extends File {
             return name.substring(name.lastIndexOf(".") + 1);
         } else {
             throw new RuntimeException("Extension not found in file name! " + name);
+        }
+    }
+
+    public Optional<Extension> getExtension2() {
+        try{
+        return Optional.of(
+                Extension.valueOf(
+                        getExtension().toUpperCase()));
+        } catch (IllegalArgumentException ex){
+            return Optional.empty();
         }
     }
 
@@ -68,38 +66,6 @@ public class FileCms extends File {
     public byte[] getBytes() throws FileNotFoundException, IOException {
         InputStream inputStream = new FileInputStream(this);
         return IOUtils.toByteArray(inputStream);
-    }
-
-    public void defineType() {
-        String extension = this.getExtension().toLowerCase();
-
-        for (int i = 0; i < VIDEO_EXTENSIONS.length; i++) {
-            if (VIDEO_EXTENSIONS[i].equals(extension)) {
-                this.type = FileType.VIDEO;
-                return;
-            }
-        }
-
-        for (int i = 0; i < AUDIO_EXTENSIONS.length; i++) {
-            if (AUDIO_EXTENSIONS[i].equals(extension)) {
-                this.type = FileType.AUDIO;
-                return;
-            }
-        }
-
-        for (int i = 0; i < IMAGE_EXTENSIONS.length; i++) {
-            if (IMAGE_EXTENSIONS[i].equals(extension)) {
-                this.type = FileType.IMAGE;
-                return;
-            }
-        }
-
-        for (int i = 0; i < TXT_EXTENSIONS.length; i++) {
-            if (TXT_EXTENSIONS[i].equals(extension)) {
-                this.type = FileType.TXT;
-                return;
-            }
-        }
     }
 
     public void moveTo(File dest) {
@@ -159,20 +125,12 @@ public class FileCms extends File {
         }
     }
 
-    public boolean isTxt() {
-        return this.type == FileType.TXT;
-    }
-
-    public boolean isVideo() {
-        return type == FileType.VIDEO;
-    }
-
-    public boolean isImage() {
-        return type == FileType.IMAGE;
-    }
-
     public byte[] getInBytes() throws FileNotFoundException, IOException {
         return IOUtils.toByteArray(new FileInputStream(this));
+    }
+
+    public enum Extension {
+        MP3, MP4, AAC, M4A
     }
 
 }

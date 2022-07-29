@@ -117,8 +117,8 @@ public class Pagination {
             return pages.get(pages.size() - 1);
         }
     }
-    
-    public Number getFirsPage(){
+
+    public Number getFirsPage() {
         return 1;
     }
 

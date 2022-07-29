@@ -17,7 +17,7 @@ public class Time extends TimeStampCommon {
     public Time() {
         super(System.currentTimeMillis());
     }
-    
+
     public Time(String time) {
         super(Timestamp.valueOf(time).getTime());
     }

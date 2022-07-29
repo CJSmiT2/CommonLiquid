@@ -16,12 +16,10 @@ public class TxtFile extends FileCms {
 
     public TxtFile(String path) {
         super(new File(path));
-        valid(this);
     }
 
     public TxtFile(FileCms file) {
         super(file);
-        valid(file);
     }
 
     public String readFirstValue() {
@@ -186,13 +184,6 @@ public class TxtFile extends FileCms {
     public void removeFile() {
         if (this.exists()) {
             this.delete();
-        }
-    }
-
-    private void valid(FileCms aThis) {
-        aThis.defineType();
-        if (aThis.exists() && !aThis.isTxt()) {
-            throw new RuntimeException("Is no a txt file!" + aThis);
         }
     }
 

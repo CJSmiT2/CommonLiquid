@@ -3,6 +3,7 @@ package ua.org.smit.commontlx.filesystem;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import ua.org.smit.commontlx.filesystem.FileCms.Extension;
 
 public class FolderCms extends File {
 
@@ -60,10 +61,10 @@ public class FolderCms extends File {
         return false;
     }
 
-    public File getByname(String name) {
+    public FileCms getByname(String name) {
         for (File file : getFiles()) {
             if (file.getName().equals(name)) {
-                return file;
+                return new FileCms(file);
             }
         }
         throw new RuntimeException("Cant find file by name '" + name + "' in folder '" + super.getAbsolutePath() + "'");
@@ -157,5 +158,40 @@ public class FolderCms extends File {
             FileCms dst = new FileCms(this + File.separator + file.getName());
             file.copyTo(dst);
         }
+    }
+
+    public List<String> getFilesNames() {
+        List<String> names = new ArrayList<>();
+
+        for (FileCms file : this.getFilesTlx()) {
+            names.add(file.getNameWithoutExtension());
+        }
+
+        return names;
+    }
+
+    public List<FileCms> getFilesByExtensions(List<Extension> extensions) {
+        List<FileCms> files = new ArrayList<>();
+
+        for (FileCms file : this.getFilesTlx()) {
+            for (Extension extension : extensions) {
+                if (file.getExtension2().isPresent() 
+                        && file.getExtension2().get() == extension) {
+                    files.add(file);
+                }
+            }
+        }
+
+        return files;
+    }
+
+    public List<FileCms> getFilesByNameWithoutExtension(String name) {
+        List<FileCms> files = new ArrayList<>();
+        for (FileCms file : this.getFilesTlx()) {
+            if (file.getNameWithoutExtension().equals(name)) {
+                files.add(file);
+            }
+        }
+        return files;
     }
 }
